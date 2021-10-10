@@ -61,7 +61,7 @@ export default function IndexPage() {
           <div className={styles.header3}></div>
           <div className={styles.header4}></div>
         </div>
-        <div className={styles.title}>
+        <div className={styles.titleTop}>
           <div className={styles.title1}>Shanghai Metaverse Week</div>
           <div className={styles.title2}>上海元宇宙文化周</div>
           <div className={styles.title3}>2021.9.9 - 9.15</div>
