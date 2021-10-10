@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Input, Button, DatePicker, TimePicker } from 'antd';
+import { Input, Button, DatePicker, TimePicker, Upload } from 'antd';
 import moment from 'moment';
 import html2canvas from 'html2canvas';
 import { ReactComponent as Star } from '../public/image/star.svg';
@@ -15,6 +15,7 @@ export default function IndexPage() {
   const [date, setDate] = useState('9.20');
   const [startTime, setStartTime] = useState('14:00');
   const [endTime, setEndTime] = useState('17:00');
+  const [logo, setLogo] = useState('');
 
   const dateFormat = 'MM.DD';
   const timeFormat = 'HH:mm';
@@ -30,10 +31,26 @@ export default function IndexPage() {
   }
   function onCreateClick() {
     html2canvas(document.querySelector('#box')).then((canvas) => {
-      document.body.appendChild(canvas);
-      // window.open(canvas.toDataURL("image/png"), '_blank');
+      // document.body.appendChild(canvas);
+      const saveUrl = canvas.toDataURL('image/png');
+      const a = document.createElement('a');
+      document.body.appendChild(a);
+      a.href = saveUrl;
+      a.download = '上海元宇宙文化周【邀请函】';
+      a.click();
     });
   }
+  function getBase64(img, callback) {
+    const reader = new FileReader();
+    reader.addEventListener('load', () => callback(reader.result));
+    reader.readAsDataURL(img);
+  }
+  const handleChange = (info) => {
+    if (info.file.status === 'done') {
+      // Get this url from response in real world.
+      getBase64(info.file.originFileObj, (imageUrl) => setLogo(imageUrl));
+    }
+  };
   // @ts-ignore
   return (
     <div className={styles.container}>
@@ -74,9 +91,13 @@ export default function IndexPage() {
             </a>
             <Flower className={styles.flower} />
             <div className={styles.by}>by</div>
-            <img className={styles.logo} src={require('@/public/image/logo.png')} />
-            <img className={styles.ball} src={require('@/public/image/ball2.png')} />
+            {logo ? (
+              <img className={styles.logo} src={logo} alt="" />
+            ) : (
+              <img className={styles.logo} src={require('@/public/image/logo.png')} alt="" />
+            )}
           </div>
+          <img className={styles.ball} src={require('@/public/image/ball2.png')} />
         </div>
         <div className={styles.sponsors}>
           <div className={styles.title}>SPONSORS</div>
@@ -177,7 +198,7 @@ export default function IndexPage() {
           <br />
         </div>
         <div className={styles.row}>
-          <span className={styles.label}>position:</span>
+          <span className={styles.label}>title:</span>
           <Input
             placeholder="input position"
             value={position}
@@ -213,11 +234,31 @@ export default function IndexPage() {
           <br />
         </div>
         <div className={styles.row}>
-          <span className={styles.label}></span>
-          <Button type="primary" onClick={onCreateClick}>
-            create
-          </Button>
+          <span className={styles.label}>logo:</span>
+          <div>
+            <Upload
+              name="avatar"
+              accept=".jpg,.jpeg,.png"
+              listType="picture-card"
+              className="avatar-uploader"
+              showUploadList={false}
+              onChange={handleChange}
+            >
+              {logo ? (
+                <img src={logo} alt="avatar" style={{ maxWidth: '100%' }} />
+              ) : (
+                <img
+                  src={require('@/public/image/logo.png')}
+                  alt="avatar"
+                  style={{ width: '100%' }}
+                />
+              )}
+            </Upload>
+          </div>
         </div>
+        <Button className={styles.button} type="primary" onClick={onCreateClick}>
+          create
+        </Button>
       </div>
     </div>
   );
